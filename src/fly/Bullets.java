@@ -99,12 +99,10 @@ public class Bullets extends GameObject {
         continue;
       }
       if(needcollision){
-        //System.out.println("needcollision ");
-        if (isCollision(planesprite, i, 10)) {
-          //System.out.println("collision ");
+        if (isCollision(planesprite, i, 32)) {
           Navigate.mc.gameover = true;
-          Navigate.mc.explosion.sprite.setPosition(bullets[i][1] - 16,
-              bullets[i][2] - 16);
+          Navigate.mc.explosion.sprite.setPosition(bullets[i][1] - 32,
+              bullets[i][2] - 32);
           bullets[i][5] = 0;
           continue;
         }
@@ -114,13 +112,11 @@ public class Bullets extends GameObject {
   }
 
   private boolean isCollision(Sprite sprite,int i,int range){
-    //updataspritepos(i);
-    //return sprite.collidesWith(this.sprite,true);
     boolean result=false;
-    int planeXCenter=sprite.getX()+12;
-    int planeYCenter=sprite.getY()+12;
-    int bulletXCenter=bullets[i][1]+3;
-    int bulletYCenter=bullets[i][2]+3;
+    int planeXCenter=sprite.getX()+43;
+    int planeYCenter=sprite.getY()+34;
+    int bulletXCenter=bullets[i][1]+6;
+    int bulletYCenter=bullets[i][2]+6;
     if(Math.abs(planeXCenter-bulletXCenter) < range){
       if (Math.abs(planeYCenter - bulletYCenter )< range) {
         result = true;
@@ -132,16 +128,6 @@ public class Bullets extends GameObject {
   private void updataspritepos(int i){
     sprite.setPosition(bullets[i][1],bullets[i][2]);
   }
-
-/* no use now
-  public void resetDeadBullet(){
-    for (int i = 0; i < bullets.length; i++) {
-      if(bullets[i][5]==0){//dead bullet
-        initBullet(i);
-      }
-    }
-  }
-  */
 
   public void killbullets(Sprite planesprite,int range){
     for (int i = 0; i < bullets.length; i++) {

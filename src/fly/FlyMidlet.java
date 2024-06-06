@@ -13,61 +13,28 @@ import javax.microedition.lcdui.*;
  * @version 1.0
  */
 
-public class FlyMidlet extends MIDlet implements CommandListener, ItemStateListener {
+public class FlyMidlet extends MIDlet {
     Navigate ng;
 
     public FlyMidlet() {
         ng = Navigate.getInstance(this);
-        CreateForms();
     }
 
     protected void startApp() {
-
+        Init();
     }
 
     protected void pauseApp() {
-//        System.out.println("pauseApp");
     }
 
     protected void destroyApp(boolean parm1) {
-//        System.out.println("destroyApp");
         Navigate.mc.stop();
         MyGameCanvas.cleanJob();
         Navigate.cleanJob();
     }
 
-    private void printInfo() {
-    }
-
-    private List m_MainList;
-
-    public void CreateForms() {
-        ng.display.setCurrent(ng.mc);
-        ng.mc.StartGame();
-    }
-
-    public void commandAction(Command command, Displayable displayable) {
-        int iSelect;
-        if ((command == List.SELECT_COMMAND)) {
-
-            iSelect = m_MainList.getSelectedIndex();
-            switch (iSelect) {
-                case 0:
-                    ng.display.setCurrent(ng.mc);
-                    ng.mc.StartGame();
-                    break;
-                case 1:
-                    exitMIDlet();
-                    break;
-
-                default:
-                    break;
-            }
-        }
-    }
-
-    public void itemStateChanged(Item item) {
-
+    public void Init() {
+        Navigate.OpenMenu();
     }
 
     public void exitMIDlet() {
