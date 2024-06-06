@@ -1,27 +1,14 @@
 package fly;
 
-
 import javax.microedition.lcdui.game.GameCanvas;
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.*;
 
-/**
- * <p>Title: </p>
- * <p>Description: </p>
- * <p>Copyright: Copyright (c) 2004</p>
- * <p>Company: </p>
- *
- * @author not attributable
- * @version 1.0
- */
-
-public class MyGameCanvas extends GameCanvas
-        implements Runnable, CommandListener {
+public class MyGameCanvas extends GameCanvas implements Runnable, CommandListener {
     private static MyGameCanvas instance;
     Graphics g;
     boolean running;
     Thread t;
-    Command startcmd, exitcmd, restartcmd;
     int keystate;
     boolean keyevent;
     boolean key_up, key_down, key_left, key_right, key_fire;
@@ -29,7 +16,6 @@ public class MyGameCanvas extends GameCanvas
     public int screenwidth;
     public int screenheight;
     boolean gameover;
-    //define your variable here
     long gametimeoffset;
     long gametime;
     int bombnum;
@@ -37,12 +23,13 @@ public class MyGameCanvas extends GameCanvas
     int bombawardtop;
     GameObject plane;
     int planedirection;
+
     TiledLayer background;
     Bullets bullets;
     GameObject explosion;
     GameObject bomb;
     Image bomb_ico;
-//    Font fontbig,fontsmall;
+    DrawNumberHandler number;
 
     protected MyGameCanvas() {
         super(true);
@@ -50,8 +37,6 @@ public class MyGameCanvas extends GameCanvas
         g = getGraphics();
         running = false;
         t = null;
-        addCommand(startcmd = new Command("开始", Command.OK, 1));
-        addCommand(exitcmd = new Command("退出", Command.EXIT, 1));
         setCommandListener(this);
         screenwidth = getWidth();
         screenheight = getHeight();
@@ -74,14 +59,11 @@ public class MyGameCanvas extends GameCanvas
         img = ImageTools.getImage("/pic/explosion.png");
         explosion = new GameObject(img, 96, 96);
         bomb_ico = ImageTools.getImage("/pic/icon_bomb.png");
-        img = ImageTools.getImage("/pic/b_number.png");
-//        fontbig=new Font(g,img,10,15,new char[]{'0','1','2','3','4','5','6','7','8','9'});
-        img = ImageTools.getImage("/pic/s_number.png");
-//        fontsmall=new Font(g,img,5,7,new char[]{'0','1','2','3','4','5','6','7','8','9'});
         img = ImageTools.getImage("/pic/explosion.png");
         bomb = new GameObject(img, 96, 96);
         bombaward = new int[]{0, 1, 1, 1, 1, 1};
         bombawardtop = bombaward.length - 1;
+        number = new DrawNumberHandler("/pic/number.png", 32, 48);
     }
 
     synchronized public static MyGameCanvas getInstance() {
@@ -107,10 +89,10 @@ public class MyGameCanvas extends GameCanvas
                 }
             }
         }
-        System.out.println("MyGameCanvas run end");
     }
 
     public void start() {
+        gameInit();
         if (!running) {
             running = true;
             t = new Thread(this);
@@ -132,9 +114,9 @@ public class MyGameCanvas extends GameCanvas
         bullets.paint(g);
         plane.paint(g);
         bullets.refreshBullets(plane.sprite, !gameover && !bomb.alive);
-        g.drawImage(bomb_ico, 0, screenheight - 1, g.BOTTOM | g.LEFT);
-//        fontbig.drawString(String.valueOf(gametime),screenwidth/2-15,10);
-//        fontsmall.drawString(String.valueOf(bombnum),bomb_ico.getWidth(),screenheight-fontsmall.height);
+        g.drawImage(bomb_ico, 40, screenheight - 64, g.BOTTOM | g.LEFT);
+        number.ShowNumber(g, (int) gametime, screenwidth / 2 - 15, 50, AlignmentType.Center);
+        number.ShowNumber(g, (int) bombnum, 130, screenheight - 94, AlignmentType.Left);
         if (gameover) {
             explosion.paint(g);
             explosion.update();
@@ -142,6 +124,8 @@ public class MyGameCanvas extends GameCanvas
                 plane.alive = false;
                 g.setColor(255, 255, 255);
                 g.drawString(StringTools.timeOpinion(gametime), 5, 22, g.LEFT | g.TOP);
+                Navigate.OpenGameOver();
+                Navigate.CloseGame();
             }
         } else {
             gametime = (System.currentTimeMillis() - gametimeoffset) / 1000;
@@ -217,27 +201,10 @@ public class MyGameCanvas extends GameCanvas
     public void StartGame() {
         gameInit();
         start();
-        removeCommand(startcmd);
-        addCommand(restartcmd = new Command("重新开始", Command.OK, 1));
     }
 
     public void commandAction(Command c, Displayable d) {
-        String cmdstr = c.getLabel();
-        if (cmdstr.equals("开始")) {
-            gameInit();
-            start();
-            removeCommand(startcmd);
-            addCommand(restartcmd = new Command("重新开始", Command.OK, 1));
-        } else if (cmdstr.equals("重新开始")) {
-            stop();
-            while (t.isAlive()) ;
-            gameInit();
-            start();
-        } else if (cmdstr.equals("退出")) {
-            stop();
-            Navigate.midlet.destroyApp(false);
-            Navigate.midlet.notifyDestroyed();
-        }
+
     }
 
     private void gameinput() {
