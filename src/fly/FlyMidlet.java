@@ -26,11 +26,9 @@ public class FlyMidlet extends MIDlet implements CommandListener, ItemStateListe
     }
 
     protected void pauseApp() {
-//        System.out.println("pauseApp");
     }
 
     protected void destroyApp(boolean parm1) {
-//        System.out.println("destroyApp");
         Navigate.mc.stop();
         MyGameCanvas.cleanJob();
         Navigate.cleanJob();
