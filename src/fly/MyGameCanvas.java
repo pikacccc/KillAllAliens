@@ -31,12 +31,22 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
     Image bomb_ico;
     DrawNumberHandler number;
 
+    Image btnPause;
+    Image btnContinue;
+    Image btnBomb;
+    Image bgPause;
+
+    private boolean pause;
+    public Command cmdPause = new Command("", Command.OK, 2);
+    public Command cmdResume = new Command("", Command.OK, 2);
+
     protected MyGameCanvas() {
         super(true);
         setFullScreenMode(true);
         g = getGraphics();
         running = false;
         t = null;
+        addCommand(cmdPause);
         setCommandListener(this);
         screenwidth = getWidth();
         screenheight = getHeight();
@@ -64,6 +74,11 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
         bombaward = new int[]{0, 1, 1, 1, 1, 1};
         bombawardtop = bombaward.length - 1;
         number = new DrawNumberHandler("/pic/number.png", 32, 48);
+
+        btnPause = Util.LoadImg("/pic/btn_pause.png");
+        btnContinue = Util.LoadImg("/pic/btn_continue.png");
+        bgPause = Util.LoadImg("/pic/bg_pause.png");
+        btnBomb = Util.LoadImg("/pic/btn_bomb.png");
     }
 
     synchronized public static MyGameCanvas getInstance() {
@@ -77,6 +92,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
         long st = 0, et = 0, diff = 0;
         int rate = 50;
         while (running) {
+            if (pause) continue;
             st = System.currentTimeMillis();
             gameinput();
             gameMain();
@@ -117,6 +133,16 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
         g.drawImage(bomb_ico, 40, screenheight - 64, g.BOTTOM | g.LEFT);
         number.ShowNumber(g, (int) gametime, screenwidth / 2 - 15, 50, AlignmentType.Center);
         number.ShowNumber(g, (int) bombnum, 130, screenheight - 94, AlignmentType.Left);
+        g.drawImage(btnBomb, 50, screenheight - 50, 0);
+        if (pause) {
+            g.drawImage(btnContinue, screenwidth - 130, screenheight - 50, 0);
+            int x = screenwidth / 2 - bgPause.getWidth() / 2;
+            int y = screenheight / 2 - bgPause.getHeight() / 2;
+            g.drawImage(bgPause, x, y, 0);
+        } else {
+            g.drawImage(btnPause, screenwidth - 130, screenheight - 50, 0);
+        }
+
         if (gameover) {
             explosion.paint(g);
             explosion.update();
@@ -172,6 +198,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
 
     private void gameInit() {
         gameover = false;
+        pause = false;
         gametime = 0;
         gametimeoffset = System.currentTimeMillis();
         allowinput = true;
@@ -204,7 +231,17 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
     }
 
     public void commandAction(Command c, Displayable d) {
-
+        if (c == cmdPause) {
+            removeCommand(cmdPause);
+            addCommand(cmdResume);
+            pause = true;
+            gameMain();
+        }
+        if (c == cmdResume) {
+            removeCommand(cmdResume);
+            addCommand(cmdPause);
+            pause = false;
+        }
     }
 
     private void gameinput() {
