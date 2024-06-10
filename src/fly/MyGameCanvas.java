@@ -11,7 +11,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
     Thread t;
     int keystate;
     boolean keyevent;
-    boolean key_up, key_down, key_left, key_right, key_fire;
+    boolean key_up, key_down, key_left, key_right, key_fire, key_fire2;
     private boolean allowinput;
     public int screenwidth;
     public int screenheight;
@@ -37,8 +37,9 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
     Image bgPause;
 
     private boolean pause;
-    public Command cmdPause = new Command("", Command.OK, 2);
-    public Command cmdResume = new Command("", Command.OK, 2);
+    public Command cmdPause = new Command("", Command.OK, 1);
+    public Command cmdResume = new Command("", Command.OK, 1);
+    public Command cmdFire = new Command("", Command.EXIT, 1);
 
     protected MyGameCanvas() {
         super(true);
@@ -47,6 +48,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
         running = false;
         t = null;
         addCommand(cmdPause);
+        addCommand(cmdFire);
         setCommandListener(this);
         screenwidth = getWidth();
         screenheight = getHeight();
@@ -162,6 +164,14 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
                 bombnum += bombaward[awardindex];
                 bombaward[awardindex] = 0;
             }
+            if (key_fire2) {
+                key_fire2=false;
+                if (!bomb.alive && bombnum > 0) {//bomb isn't actived and there's enough bomb .
+                    bomb.reset();
+                    bomb.alive = true;
+                    bombnum--;
+                }
+            }
             if (keyevent) {
                 if (key_up) {
                     plane.move(0, -6);
@@ -179,13 +189,6 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
                     plane.move(6, 0);
                     plane.sprite.setFrame(2);
                 }
-                if (key_fire) {
-                    if (!bomb.alive && bombnum > 0) {//bomb isn't actived and there's enough bomb .
-                        bomb.reset();
-                        bomb.alive = true;
-                        bombnum--;
-                    }
-                }
             } else {
                 plane.sprite.setFrame(0);
             }
@@ -202,7 +205,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
         gametime = 0;
         gametimeoffset = System.currentTimeMillis();
         allowinput = true;
-        key_up = key_down = key_left = key_right = key_fire = false;
+        key_up = key_down = key_left = key_right = key_fire = key_fire2 = false;
         plane.moveto((screenwidth - plane.sprite.getWidth()) / 2,
                 (screenheight - plane.sprite.getHeight()) / 2);
         bullets.initBullets();
@@ -241,6 +244,9 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
             removeCommand(cmdResume);
             addCommand(cmdPause);
             pause = false;
+        }
+        if (c == cmdFire) {
+            key_fire2 = true;
         }
     }
 
