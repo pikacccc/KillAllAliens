@@ -12,7 +12,6 @@ public class Menu extends GameCanvas implements Runnable {
     private Graphics g;
     private int selectedOption = 0;
 
-    private Image Bg;
     private Image Title;
     private Image Play;
     private Image Exit;
@@ -37,7 +36,6 @@ public class Menu extends GameCanvas implements Runnable {
     }
 
     private void LoadImages() {
-        Bg = Util.LoadImg("/pic/background.png");
         Title = Util.LoadImg("/pic/title_begin.png");
         Play = Util.LoadImg("/pic/btn_start.png");
         Exit = Util.LoadImg("/pic/btn_quit.png");
@@ -50,8 +48,8 @@ public class Menu extends GameCanvas implements Runnable {
         int center_x = width / 2;
         int center_y = height / 2;
 
-        bg_x = center_x - Bg.getWidth() / 2;
-        bg_y = center_y - Bg.getHeight() / 2;
+        bg_x = center_x - Util.bg.getWidth() / 2;
+        bg_y = center_y - Util.bg.getHeight() / 2;
         title_x = center_x - Title.getWidth() / 2;
         title_y = center_y - Title.getHeight() / 2 - 70;
         play_x = center_x - Play.getWidth() / 2;
@@ -87,7 +85,7 @@ public class Menu extends GameCanvas implements Runnable {
     private void draw() {
         g.setColor(0);
         g.fillRect(0, 0, width, height);
-        g.drawImage(Bg, bg_x, bg_y, 0);
+        g.drawImage(Util.bg, bg_x, bg_y, 0);
         g.drawImage(Title, title_x, title_y, Graphics.TOP | Graphics.LEFT);
         if (selectedOption == 0) {
             g.setColor(0xFADF5F);

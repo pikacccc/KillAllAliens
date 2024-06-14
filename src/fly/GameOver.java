@@ -10,7 +10,6 @@ public class GameOver extends GameCanvas implements Runnable {
     private int selectedOption = 0;
     private Command selectCommand;
 
-    private Image Bg;
     private Image GameOver;
     private Image Restart;
     private Image Exit;
@@ -35,7 +34,6 @@ public class GameOver extends GameCanvas implements Runnable {
     }
 
     private void LoadImages() {
-        Bg = Util.LoadImg("/pic/background.png");
         GameOver = Util.LoadImg("/pic/title_end.png");
         Restart = Util.LoadImg("/pic/btn_restart.png");
         Exit = Util.LoadImg("/pic/btn_quit.png");
@@ -48,8 +46,8 @@ public class GameOver extends GameCanvas implements Runnable {
         int center_x = width / 2;
         int center_y = height / 2;
 
-        bg_x = center_x - Bg.getWidth() / 2;
-        bg_y = center_y - Bg.getHeight() / 2;
+        bg_x = center_x - Util.bg.getWidth() / 2;
+        bg_y = center_y - Util.bg.getHeight() / 2;
         gameOver_x = center_x - GameOver.getWidth() / 2;
         gameOver_y = center_y - GameOver.getHeight() / 2 - 70;
         restart_x = center_x - Restart.getWidth() / 2;
@@ -84,7 +82,7 @@ public class GameOver extends GameCanvas implements Runnable {
     private void draw() {
         g.setColor(0);
         g.fillRect(0, 0, width, height);
-        g.drawImage(Bg, bg_x, bg_y, 0);
+        g.drawImage( Util.bg, bg_x, bg_y, 0);
         g.drawImage(GameOver, gameOver_x, gameOver_y, Graphics.TOP | Graphics.LEFT);
         if (selectedOption == 0) {
             g.setColor(0xFADF5F);

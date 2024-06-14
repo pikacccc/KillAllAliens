@@ -57,7 +57,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable {
             y = i / backcolumns;
             background.setCell(x, y, 1);
         }
-        img = ImageTools.getImage("/pic/bullet.png");
+        img = Util.LoadImg("/pic/bullet.png");
         bullets = new Bullets(img, img.getWidth(), img.getHeight(), 20, screenwidth, screenheight);
         img = ImageTools.getImage("/pic/explosion.png");
         explosion = new GameObject(img, 96, 96);
