@@ -4,7 +4,7 @@ import javax.microedition.lcdui.game.GameCanvas;
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.*;
 
-public class MyGameCanvas extends GameCanvas implements Runnable, CommandListener {
+public class MyGameCanvas extends GameCanvas implements Runnable {
     private static MyGameCanvas instance;
     Graphics g;
     boolean running;
@@ -31,30 +31,21 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
     Image bomb_ico;
     DrawNumberHandler number;
 
-    Image btnPause;
-    Image btnContinue;
-    Image btnBomb;
     Image bgPause;
 
     private boolean pause;
-    public Command cmdPause = new Command("", Command.OK, 1);
-    public Command cmdResume = new Command("", Command.OK, 1);
-    public Command cmdFire = new Command("", Command.EXIT, 1);
 
     protected MyGameCanvas() {
-        super(true);
+        super(false);
         setFullScreenMode(true);
         g = getGraphics();
         running = false;
         t = null;
-        addCommand(cmdPause);
-        addCommand(cmdFire);
-        setCommandListener(this);
         screenwidth = getWidth();
         screenheight = getHeight();
 
         Image img = ImageTools.getImage("/pic/MyPlaneFrames.png");
-        plane = new GameObject(img, 87, 68);
+        plane = new GameObject(img, 54, 42);
         planedirection = 0;
         img = ImageTools.getImage("/pic/back_water.png");
         int backcolumns = screenwidth / img.getWidth() + 1;
@@ -75,12 +66,9 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
         bomb = new GameObject(img, 96, 96);
         bombaward = new int[]{0, 1, 1, 1, 1, 1};
         bombawardtop = bombaward.length - 1;
-        number = new DrawNumberHandler("/pic/number.png", 32, 48);
+        number = new DrawNumberHandler("/pic/number.png", 16, 24);
 
-        btnPause = Util.LoadImg("/pic/btn_pause.png");
-        btnContinue = Util.LoadImg("/pic/btn_continue.png");
         bgPause = Util.LoadImg("/pic/bg_pause.png");
-        btnBomb = Util.LoadImg("/pic/btn_bomb.png");
     }
 
     synchronized public static MyGameCanvas getInstance() {
@@ -124,7 +112,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
 
         background.paint(g);//draw background
         if (bomb.alive) {
-            bomb.moveto(plane.sprite.getX(), plane.sprite.getY());
+            bomb.moveto(plane.sprite.getX()-24, plane.sprite.getY()-21);
             bomb.paint(g);
             bomb.update();
             bullets.killbullets(plane.sprite, 96);
@@ -132,17 +120,13 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
         bullets.paint(g);
         plane.paint(g);
         bullets.refreshBullets(plane.sprite, !gameover && !bomb.alive);
-        g.drawImage(bomb_ico, 40, screenheight - 64, g.BOTTOM | g.LEFT);
+        g.drawImage(bomb_ico, 15, screenheight - 15, g.BOTTOM | g.LEFT);
         number.ShowNumber(g, (int) gametime, screenwidth / 2 - 15, 50, AlignmentType.Center);
-        number.ShowNumber(g, (int) bombnum, 130, screenheight - 94, AlignmentType.Left);
-        g.drawImage(btnBomb, 50, screenheight - 50, 0);
+        number.ShowNumber(g, (int) bombnum, 80, screenheight - 30, AlignmentType.Left);
         if (pause) {
-            g.drawImage(btnContinue, screenwidth - 130, screenheight - 50, 0);
             int x = screenwidth / 2 - bgPause.getWidth() / 2;
             int y = screenheight / 2 - bgPause.getHeight() / 2;
             g.drawImage(bgPause, x, y, 0);
-        } else {
-            g.drawImage(btnPause, screenwidth - 130, screenheight - 50, 0);
         }
 
         if (gameover) {
@@ -165,7 +149,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
                 bombaward[awardindex] = 0;
             }
             if (key_fire2) {
-                key_fire2=false;
+                key_fire2 = false;
                 if (!bomb.alive && bombnum > 0) {//bomb isn't actived and there's enough bomb .
                     bomb.reset();
                     bomb.alive = true;
@@ -233,19 +217,18 @@ public class MyGameCanvas extends GameCanvas implements Runnable, CommandListene
         start();
     }
 
-    public void commandAction(Command c, Displayable d) {
-        if (c == cmdPause) {
-            removeCommand(cmdPause);
-            addCommand(cmdResume);
-            pause = true;
-            gameMain();
+    protected void keyPressed(int keyCode) {
+        if (keyCode == -6 || keyCode == 8 || keyCode == 96 || keyCode == -8 || keyCode == -7) {
+            if (pause == true) {
+                pause = false;
+            } else {
+                pause = true;
+                gameMain();
+            }
         }
-        if (c == cmdResume) {
-            removeCommand(cmdResume);
-            addCommand(cmdPause);
-            pause = false;
-        }
-        if (c == cmdFire) {
+
+        int action = getGameAction(keyCode);
+        if (action == FIRE) {
             key_fire2 = true;
         }
     }

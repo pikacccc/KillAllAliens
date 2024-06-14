@@ -6,12 +6,11 @@ import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.GameCanvas;
 import java.io.PrintStream;
 
-public class Menu extends GameCanvas implements CommandListener, Runnable {
+public class Menu extends GameCanvas implements Runnable {
     private static Menu instance;
     private boolean isRunning = false;
     private Graphics g;
     private int selectedOption = 0;
-    private Command selectCommand;
 
     private Image Bg;
     private Image Title;
@@ -33,9 +32,6 @@ public class Menu extends GameCanvas implements CommandListener, Runnable {
         super(false);
         this.setFullScreenMode(true);
         g = getGraphics();
-        selectCommand = new Command("", Command.OK, 0);
-        addCommand(selectCommand);
-        setCommandListener(this);
         LoadImages();
         InitCoordinates();
     }
@@ -57,11 +53,11 @@ public class Menu extends GameCanvas implements CommandListener, Runnable {
         bg_x = center_x - Bg.getWidth() / 2;
         bg_y = center_y - Bg.getHeight() / 2;
         title_x = center_x - Title.getWidth() / 2;
-        title_y = center_y - Title.getHeight() / 2 - 100;
+        title_y = center_y - Title.getHeight() / 2 - 70;
         play_x = center_x - Play.getWidth() / 2;
-        play_y = center_y - Play.getHeight() / 2 + 135;
+        play_y = center_y - Play.getHeight() / 2 + 120;
         exit_x = center_x - Exit.getWidth() / 2;
-        exit_y = center_y - Exit.getHeight() / 2 + 210;
+        exit_y = center_y - Exit.getHeight() / 2 + 170;
     }
 
     public void start() {
@@ -73,31 +69,14 @@ public class Menu extends GameCanvas implements CommandListener, Runnable {
     private int keyTrigger = 0;
 
     private void tick() {
-//        int keys = getKeyStates();
-//
-//        int inv = 0xffffffff - keyTrigger;
-//        int key = inv & keys;
-//        keyTrigger &= keys;
-////        System.out.println(keys);
-//        if ((key & DOWN_PRESSED) != 0) {
-//            selectedOption = (selectedOption + 1) % 2;
-//            keyTrigger |= DOWN_PRESSED;
-//        }
-//        if ((key & UP_PRESSED) != 0) {
-//            selectedOption = (selectedOption - 1 + 2) % 2;
-//            keyTrigger |= UP_PRESSED;
-//        }
-//        if ((key & FIRE_PRESSED) != 0) {
-//            keyTrigger |= FIRE_PRESSED;
-//            executeSelectedOption();
-//        }
     }
 
     public void run() {
+        draw();
         while (isRunning) {
-            tick();
-            if (!isRunning) break;
-            draw();
+//            tick();
+//            if (!isRunning) break;
+//            draw();
         }
     }
 
@@ -115,27 +94,28 @@ public class Menu extends GameCanvas implements CommandListener, Runnable {
         } else {
             g.setColor(0xFFFFCF);
         }
-        g.fillRect(play_x - 70, play_y - 15, 300, 56);
+        g.fillRect(play_x - 32, play_y - 8, 160, 32);
         g.drawImage(Play, play_x, play_y, 0);
         if (selectedOption == 1) {
             g.setColor(0xFADF5F);
         } else {
             g.setColor(0xFFFFCF);
         }
-        g.fillRect(exit_x - 70, exit_y - 15, 300, 56);
+        g.fillRect(exit_x - 32, exit_y - 8, 160, 32);
         g.drawImage(Exit, exit_x, exit_y, 0);
         flushGraphics();
     }
 
     protected void keyPressed(int keyCode) {
         int gameAction = getGameAction(keyCode);
-        if (gameAction == UP || gameAction == LEFT || gameAction == KEY_NUM2 || gameAction == KEY_NUM4) {
+        if (gameAction == UP || gameAction == LEFT) {
             selectedOption = (selectedOption - 1 + 2) % 2;
-        } else if (gameAction == DOWN || gameAction == RIGHT || gameAction == KEY_NUM8 || gameAction == KEY_NUM6) {
+        } else if (gameAction == DOWN || gameAction == RIGHT) {
             selectedOption = (selectedOption + 1) % 2;
-        } else if (gameAction == FIRE || gameAction == KEY_NUM5) {
+        } else if (gameAction == FIRE) {
             executeSelectedOption();
         }
+        draw();
     }
 
     private void executeSelectedOption() {
@@ -145,12 +125,6 @@ public class Menu extends GameCanvas implements CommandListener, Runnable {
         } else if (selectedOption == 1) {
             Navigate.exitMIDlet();
         }
-    }
-
-    public void commandAction(Command command, Displayable displayable) {
-//        if (command == selectCommand) {
-//            executeSelectedOption();
-//        }
     }
 
     synchronized public static Menu getInstance() {

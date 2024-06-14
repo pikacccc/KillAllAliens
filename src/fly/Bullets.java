@@ -99,7 +99,7 @@ public class Bullets extends GameObject {
         continue;
       }
       if(needcollision){
-        if (isCollision(planesprite, i, 32)) {
+        if (isCollision(planesprite, i, 24)) {
           Navigate.mc.gameover = true;
           Navigate.mc.explosion.sprite.setPosition(bullets[i][1] - 32,
               bullets[i][2] - 32);
@@ -113,8 +113,8 @@ public class Bullets extends GameObject {
 
   private boolean isCollision(Sprite sprite,int i,int range){
     boolean result=false;
-    int planeXCenter=sprite.getX()+43;
-    int planeYCenter=sprite.getY()+34;
+    int planeXCenter=sprite.getX()+27;
+    int planeYCenter=sprite.getY()+21;
     int bulletXCenter=bullets[i][1]+6;
     int bulletYCenter=bullets[i][2]+6;
     if(Math.abs(planeXCenter-bulletXCenter) < range){
