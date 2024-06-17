@@ -13,7 +13,7 @@ import javax.microedition.lcdui.*;
  * @version 1.0
  */
 
-public class FlyMidlet extends MIDlet {
+public class FlyMidlet extends MIDlet implements IExit {
     Navigate ng;
 
     public FlyMidlet() {
@@ -42,5 +42,9 @@ public class FlyMidlet extends MIDlet {
         Navigate.cleanJob();
         destroyApp(true);
         notifyDestroyed();
+    }
+
+    public void Exit() {
+        Navigate.exitMIDlet();
     }
 }

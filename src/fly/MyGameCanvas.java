@@ -3,8 +3,9 @@ package fly;
 import javax.microedition.lcdui.game.GameCanvas;
 import javax.microedition.lcdui.*;
 import javax.microedition.lcdui.game.*;
+import javax.microedition.midlet.MIDlet;
 
-public class MyGameCanvas extends GameCanvas implements Runnable {
+public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
     private static MyGameCanvas instance;
     Graphics g;
     boolean running;
@@ -33,17 +34,20 @@ public class MyGameCanvas extends GameCanvas implements Runnable {
 
     Image bgPause;
 
-    private boolean pause;
+    private boolean pause = false;
+    private PausePannel pp;
+    private FlyMidlet midlet;
 
-    protected MyGameCanvas() {
+    protected MyGameCanvas(FlyMidlet midlet) {
         super(false);
+        this.midlet = midlet;
         setFullScreenMode(true);
         g = getGraphics();
         running = false;
         t = null;
         screenwidth = getWidth();
         screenheight = getHeight();
-
+        pp = new PausePannel(midlet, this, screenwidth, screenheight);
         Image img = ImageTools.getImage("/pic/MyPlaneFrames.png");
         plane = new GameObject(img, 54, 42);
         planedirection = 0;
@@ -71,9 +75,9 @@ public class MyGameCanvas extends GameCanvas implements Runnable {
         bgPause = Util.LoadImg("/pic/bg_pause.png");
     }
 
-    synchronized public static MyGameCanvas getInstance() {
+    synchronized public static MyGameCanvas getInstance(FlyMidlet midlet) {
         if (instance == null) {
-            instance = new MyGameCanvas();
+            instance = new MyGameCanvas(midlet);
         }
         return instance;
     }
@@ -112,21 +116,23 @@ public class MyGameCanvas extends GameCanvas implements Runnable {
 
         background.paint(g);//draw background
         if (bomb.alive) {
-            bomb.moveto(plane.sprite.getX()-24, plane.sprite.getY()-21);
+            if (!pause) {
+                bomb.moveto(plane.sprite.getX() - 24, plane.sprite.getY() - 21);
+                bomb.update();
+                bullets.killbullets(plane.sprite, 96);
+            }
             bomb.paint(g);
-            bomb.update();
-            bullets.killbullets(plane.sprite, 96);
         }
         bullets.paint(g);
         plane.paint(g);
-        bullets.refreshBullets(plane.sprite, !gameover && !bomb.alive);
+        bullets.refreshBullets(plane.sprite, !gameover && !bomb.alive, !pause);
         g.drawImage(bomb_ico, 15, screenheight - 15, g.BOTTOM | g.LEFT);
         number.ShowNumber(g, (int) gametime, screenwidth / 2 - 15, 50, AlignmentType.Center);
         number.ShowNumber(g, (int) bombnum, 80, screenheight - 30, AlignmentType.Left);
         if (pause) {
-            int x = screenwidth / 2 - bgPause.getWidth() / 2;
-            int y = screenheight / 2 - bgPause.getHeight() / 2;
-            g.drawImage(bgPause, x, y, 0);
+            pp.Draw(g);
+            flushGraphics();
+            return;
         }
 
         if (gameover) {
@@ -140,8 +146,11 @@ public class MyGameCanvas extends GameCanvas implements Runnable {
                 Navigate.CloseGame();
             }
         } else {
-            gametime = (System.currentTimeMillis() - gametimeoffset) / 1000;
-            int awardindex = (int) gametime / 20;
+            if ((System.currentTimeMillis() - gametimeoffset) / 1000 >= 1) {
+                gametimeoffset = System.currentTimeMillis();
+                gametime += 1;
+            }
+            int awardindex = (int) (gametime / 20) % bombaward.length;
             if (awardindex > bombawardtop)
                 awardindex = bombawardtop;
             if (bombaward[awardindex] != 0) {
@@ -218,23 +227,25 @@ public class MyGameCanvas extends GameCanvas implements Runnable {
     }
 
     protected void keyPressed(int keyCode) {
+        int action = getGameAction(keyCode);
         if (keyCode == -6 || keyCode == 8 || keyCode == 96 || keyCode == -8 || keyCode == -7) {
-            if (pause == true) {
-                pause = false;
-            } else {
+            if (!pause) {
                 pause = true;
                 gameMain();
             }
         }
-
-        int action = getGameAction(keyCode);
-        if (action == FIRE) {
-            key_fire2 = true;
+        if (!pause) {
+            if (action == FIRE) {
+                key_fire2 = true;
+            }
+        } else {
+            pp.keyPressed(action);
+            if (pause) gameMain();
         }
     }
 
     private void gameinput() {
-        if (allowinput) {
+        if (allowinput && !pause) {
             keystate = getKeyStates();
             keyevent = false;
             if ((keystate & UP_PRESSED) != 0) {//up
@@ -297,4 +308,8 @@ public class MyGameCanvas extends GameCanvas implements Runnable {
     }
 
 
+    public void RestartGame() {
+        pause = false;
+        gametimeoffset = System.currentTimeMillis();
+    }
 }

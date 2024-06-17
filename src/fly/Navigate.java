@@ -1,6 +1,7 @@
 package fly;
 
 import javax.microedition.lcdui.*;
+import javax.microedition.midlet.MIDlet;
 
 /**
  * <p>Title: </p>
@@ -19,9 +20,11 @@ public class Navigate {
     public static Menu gameMenu;
     public static GameOver gameOver;
 
+
     protected Navigate(FlyMidlet midlet) {
         Navigate.midlet = midlet;
-        Navigate.mc = MyGameCanvas.getInstance();
+        Navigate.mc = MyGameCanvas.getInstance(midlet);
+
         Navigate.gameMenu = Menu.getInstance();
         Navigate.gameOver = GameOver.getInstance();
         Navigate.display = Display.getDisplay(midlet);
@@ -59,7 +62,7 @@ public class Navigate {
     public static void CloseGame() {
         mc.stop();
         mc.cleanJob();
-        mc=MyGameCanvas.getInstance();
+        mc = MyGameCanvas.getInstance(midlet);
     }
 
     public static void OpenGameOver() {
