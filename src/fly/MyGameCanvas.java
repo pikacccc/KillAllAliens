@@ -228,12 +228,15 @@ public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
 
     protected void keyPressed(int keyCode) {
         int action = getGameAction(keyCode);
-        if (keyCode == -6 || keyCode == 8 || keyCode == 96 || keyCode == -8 || keyCode == -7) {
-            if (!pause) {
-                pause = true;
-                gameMain();
+        if (keyCode == 8 || keyCode == 96 || (keyCode <= -6 && keyCode >= -20)) {
+            if (action != FIRE && action != UP && action != LEFT && action != RIGHT && action != DOWN) {
+                if (!pause) {
+                    pause = true;
+                    gameMain();
+                }
             }
         }
+
         if (!pause) {
             if (action == FIRE) {
                 key_fire2 = true;
