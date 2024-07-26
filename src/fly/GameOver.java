@@ -63,11 +63,7 @@ public class GameOver extends GameCanvas implements Runnable {
     }
 
     public void run() {
-        while (isRunning) {
-            tick();
-            if (!isRunning) break;
-            draw();
-        }
+        draw();
     }
 
     private int keyTrigger = 0;

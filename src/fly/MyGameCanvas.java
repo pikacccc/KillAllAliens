@@ -141,8 +141,8 @@ public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
                 plane.alive = false;
                 g.setColor(255, 255, 255);
                 g.drawString(StringTools.timeOpinion(gametime), 5, 22, g.LEFT | g.TOP);
-                Navigate.OpenGameOver();
                 Navigate.CloseGame();
+                Navigate.OpenGameOver();
             }
         } else {
             if ((System.currentTimeMillis() - gametimeoffset) / 1000 >= 1) {
@@ -187,7 +187,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
 
         }
 
-        this.drawString(g, "0/返回：返回菜单", this.getWidth() - 140, this.getHeight() - 16, 4 | 16);
+        if(!gameover) this.drawString(g, "0/返回：返回菜单", this.getWidth() - 140, this.getHeight() - 16, 4 | 16);
         flushGraphics();
     }
 
@@ -246,7 +246,8 @@ public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
 
     protected void hideNotify() {
         super.hideNotify();
-        pause = true;gameMain();
+        pause = true;
+        gameMain();
         System.out.println("Out");
     }
 

@@ -54,7 +54,6 @@ public class Navigate {
     }
 
     public static void StartGame() {
-
         mc.start();
         display.setCurrent(mc);
     }
