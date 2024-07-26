@@ -187,7 +187,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
 
         }
 
-        this.drawString(g, "0/è¿”å›ï¼šè¿”å›èœå•", this.getWidth() - 140, this.getHeight() - 16, 4 | 16);
+        this.drawString(g, "0/·µ»Ø£º·µ»Ø²Ëµ¥", this.getWidth() - 140, this.getHeight() - 16, 4 | 16);
         flushGraphics();
     }
 
