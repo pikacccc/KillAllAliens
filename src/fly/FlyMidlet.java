@@ -28,9 +28,12 @@ public class FlyMidlet extends MIDlet implements IExit {
     }
 
     protected void destroyApp(boolean parm1) {
+        MyGameCanvas.cleanJob();
+        Navigate.cleanJob();
         Navigate.mc.stop();
         MyGameCanvas.cleanJob();
         Navigate.cleanJob();
+        notifyDestroyed();
     }
 
     public void Init() {
@@ -38,10 +41,7 @@ public class FlyMidlet extends MIDlet implements IExit {
     }
 
     public void exitMIDlet() {
-        MyGameCanvas.cleanJob();
-        Navigate.cleanJob();
         destroyApp(true);
-        notifyDestroyed();
     }
 
     public void Exit() {
