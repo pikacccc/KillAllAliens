@@ -86,9 +86,8 @@ public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
         long st = 0, et = 0, diff = 0;
         int rate = 50;
         while (running) {
-            if (pause) continue;
             st = System.currentTimeMillis();
-            gameinput();
+            if (!pause) gameinput();
             gameMain();
             et = System.currentTimeMillis();
             diff = et - st;
@@ -232,7 +231,6 @@ public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
             if (action != FIRE && action != UP && action != LEFT && action != RIGHT && action != DOWN) {
                 if (!pause) {
                     pause = true;
-                    gameMain();
                 }
             }
         }
@@ -243,14 +241,12 @@ public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
             }
         } else {
             pp.keyPressed(action);
-            if (pause) gameMain();
         }
     }
 
     protected void hideNotify() {
         super.hideNotify();
-        pause = true;
-        gameMain();
+        pause = true;gameMain();
         System.out.println("Out");
     }
 
