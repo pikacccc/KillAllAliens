@@ -30,6 +30,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
     GameObject explosion;
     GameObject bomb;
     Image bomb_ico;
+    Image backTip;
     DrawNumberHandler number;
 
     Image bgPause;
@@ -49,6 +50,7 @@ public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
         screenheight = getHeight();
         pp = new PausePannel(midlet, this, screenwidth, screenheight);
         Image img = ImageTools.getImage("/pic/MyPlaneFrames.png");
+        backTip = Util.LoadImg("/pic/BackTip.png");
         plane = new GameObject(img, 54, 42);
         planedirection = 0;
         img = ImageTools.getImage("/pic/back_water.png");
@@ -187,7 +189,9 @@ public class MyGameCanvas extends GameCanvas implements Runnable, IRestartGame {
 
         }
 
-        if(!gameover) this.drawString(g, "0/·µ»Ø£º·µ»Ø²Ëµ¥", this.getWidth() - 140, this.getHeight() - 16, 4 | 16);
+        if(!gameover){
+            g.drawImage(backTip, this.getWidth() - 140, this.getHeight() - 40, 0);
+        }
         flushGraphics();
     }
 
