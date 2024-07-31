@@ -63,7 +63,10 @@ public class GameOver extends GameCanvas implements Runnable {
     }
 
     public void run() {
-        draw();
+        for(int i=0;i<5;++i){
+            delay(50);
+            draw();
+        }
     }
 
     private int keyTrigger = 0;
@@ -127,5 +130,13 @@ public class GameOver extends GameCanvas implements Runnable {
 
     public static void cleanJob() {
         instance = null;
+    }
+
+    public void delay(int value) {
+        try {
+            Thread.sleep((long)value);
+        } catch (Exception var3) {
+        }
+
     }
 }
